@@ -6,7 +6,6 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -23,12 +22,32 @@ public class Utils {
         }
     }
 
-    public static Stream<String> processLine(String line) {
-        return Arrays.stream(line.replaceAll(",", " ").split("\\s+"));
+    public static String[] processFile(String path) throws Exception {
+        Resource dataFile = new ClassPathResource(path);
+
+        InputStream resource = dataFile.getInputStream();
+        String[] lines ;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resource))) {
+            lines = reader.lines().toArray(String[]::new);
+        }
+        return lines;
+    }
+
+    public static String[] processLine(String line) {
+        return line.replaceAll(",", " ").split("\\s+");
     }
 
     public static Stream<Integer> toInts(Stream<String> strs) {
         return strs.map(Integer::parseInt);
+    }
+
+    public static int[] toInts(String[] strs) {
+        int[] ints = new int[strs.length];
+        for (int i = 0; i < strs.length; i++) {
+            ints[i] = Integer.parseInt(strs[i]);
+        }
+        return ints;
     }
 
     public static BiFunction<Double, Double, Double> strToOperator(String str) {
