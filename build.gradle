@@ -1,13 +1,13 @@
 buildscript {
-	ext {
-		springBootVersion = "2.1.1.RELEASE"
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
-	}
+    ext {
+        springBootVersion = "2.1.1.RELEASE"
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
 }
 
 apply plugin: "java"
@@ -18,11 +18,12 @@ group = "com.mrexception"
 version = "0.0.1-SNAPSHOT"
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation "org.springframework.boot:spring-boot-starter"
-	implementation "com.google.guava:guava"
-	testImplementation "org.springframework.boot:spring-boot-starter-test"
+    implementation "org.springframework.boot:spring-boot-starter"
+    implementation "com.google.guava:guava:27.0-jre"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    implementation "org.apache.commons:commons-text:1.6"
 }
