@@ -34,8 +34,12 @@ public class Utils {
         return lines;
     }
 
-    public static String[] processLine(String line) {
-        return line.replaceAll(",", " ").split("\\s+");
+    public static String[] splitLine(String line) {
+        return splitLine(line, ",");
+    }
+
+    public static String[] splitLine(String line, String delimiter) {
+        return line.replaceAll(delimiter, " ").split("\\s+");
     }
 
     public static Stream<Integer> toInts(Stream<String> strs) {
