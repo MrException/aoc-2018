@@ -24,6 +24,13 @@ repositories {
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter"
     implementation "com.google.guava:guava:27.0-jre"
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
     implementation "org.apache.commons:commons-text:1.6"
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.projectlombok:lombok'
+
+    // if using lombok in test classes
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.projectlombok:lombok'
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
 }
