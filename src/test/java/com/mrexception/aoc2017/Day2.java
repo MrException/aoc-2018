@@ -1,42 +1,101 @@
 package com.mrexception.aoc2017;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.stream.Collectors;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
-@RunWith( JUnit4.class)
+import static com.mrexception.Utils.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(JUnit4.class)
 public class Day2 {
-    private Logger log = LoggerFactory.getLogger( Day2.class.getName() );
-
-    private Resource dataFile;
-
-    @Before
-    public void setup() {
-        dataFile = new ClassPathResource( "Day2.txt" );
-    }
+    private Logger log = LoggerFactory.getLogger(Day2.class.getName());
+    private String inputFile = "com/mrexception/aoc2017/day2.txt";
 
     @Test
     public void testData() throws Exception {
-        InputStream resource = dataFile.getInputStream();
-        String data;
-        try ( BufferedReader reader = new BufferedReader(
-          new InputStreamReader(resource)) ) {
-            data = reader.lines()
-              .collect( Collectors.joining( "\n" ) );
+        assertThat(processFile(inputFile).length).isGreaterThan(0);
+    }
+
+    @Test
+    public void testPartOne() throws Exception {
+        String[] testData = new String[]{
+                "5 1 9 5",
+                "7 5 3",
+                "2 4 6 8"
+        };
+        assertThat(new Logic(testData).partOne()).isEqualTo(18);
+
+        assertThat(new Logic(processFile(inputFile)).partOne()).isEqualTo(58975);
+    }
+
+    @Test
+    public void testPartTwo() throws Exception {
+        String[] testData = new String[]{
+                "5 9 2 8",
+                "9 4 7 3",
+                "3 8 6 5"
+        };
+        assertThat(new Logic(testData).partTwo()).isEqualTo(9);
+
+        assertThat(new Logic(processFile(inputFile)).partTwo()).isEqualTo(308);
+    }
+
+    class Logic {
+        private final int[][] data;
+
+        Logic(String[] strs) {
+            data = new int[strs.length][];
+            for (int i = 0; i < strs.length; i++) {
+                data[i] = toInts(splitLine(strs[i]));
+            }
         }
-        log.info(data);
-        assertThat(data.length()).isGreaterThan( 0 );
+
+        int partOne() {
+            int checksum = 0;
+            for (int[] line : data) {
+                int smallest = Integer.MAX_VALUE;
+                int largest = Integer.MIN_VALUE;
+                for (int i : line) {
+                    if (i < smallest) {
+                        smallest = i;
+                    }
+                    if (i > largest) {
+                        largest = i;
+                    }
+                }
+                checksum += largest - smallest;
+            }
+            return checksum;
+        }
+
+        int partTwo() {
+            int checksum = 0;
+            for (int[] line : data) {
+                for (int i = 0; i < line.length - 1; i++) {
+                    int a = line[i];
+                    boolean found = false;
+                    for (int j = i + 1; j < line.length; j++) {
+                        int b = line[j];
+                        if (a % b == 0) {
+                            checksum += a / b;
+                            found = true;
+                            break;
+                        }
+                        if (b % a == 0) {
+                            checksum += b / a;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        break;
+                    }
+                }
+            }
+            return checksum;
+        }
     }
 }
