@@ -1,6 +1,5 @@
 package com.mrexception.aoc2018;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,11 +7,10 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.mrexception.Utils.processFile;
-import static com.mrexception.Utils.toInts;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnit4.class)
@@ -22,10 +20,7 @@ public class Day2 {
 
     @Test
     public void testData() throws Exception {
-        processFile(inputFile, lines -> {
-            String data = lines.collect(Collectors.joining("\n"));
-            assertThat(data.length()).isGreaterThan(0);
-        });
+        assertThat(processFile(inputFile).length).isGreaterThan(0);
     }
 
     @Test
