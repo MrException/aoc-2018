@@ -7,11 +7,7 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.stream.Collectors;
-
-import static com.mrexception.Utils.processFile;
-import static com.mrexception.Utils.splitLine;
-import static com.mrexception.Utils.toInts;
+import static com.mrexception.Utils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnit4.class)
@@ -21,10 +17,7 @@ public class Day3 {
 
     @Test
     public void testData() throws Exception {
-        processFile(inputFile, lines -> {
-            String data = lines.collect(Collectors.joining("\n"));
-            assertThat(data.length()).isGreaterThan(0);
-        });
+        assertThat(processFile(inputFile).length).isGreaterThan(0);
     }
 
     @Test
