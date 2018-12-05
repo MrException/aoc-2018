@@ -15,6 +15,12 @@ public class Day3 {
     private Logger log = LoggerFactory.getLogger(getClass().getName());
     private String inputFile = "com/mrexception/aoc2018/day3.txt";
 
+    private String[] testData = new String[]{
+            "#1 @ 1,3: 4x4",
+            "#2 @ 3,1: 4x4",
+            "#3 @ 5,5: 2x2"
+    };
+
     @Test
     public void testData() throws Exception {
         assertThat(processFile(inputFile).length).isGreaterThan(0);
@@ -22,11 +28,6 @@ public class Day3 {
 
     @Test
     public void testPartOne() throws Exception {
-        String[] testData = new String[]{
-                "#1 @ 1,3: 4x4",
-                "#2 @ 3,1: 4x4",
-                "#3 @ 5,5: 2x2"
-        };
         assertThat(new Logic(testData).partOne()).isEqualTo(4);
 
         assertThat(new Logic(processFile(inputFile)).partOne()).isEqualTo(113716);
@@ -34,11 +35,6 @@ public class Day3 {
 
     @Test
     public void testPartTwo() throws Exception {
-        String[] testData = new String[]{
-                "#1 @ 1,3: 4x4",
-                "#2 @ 3,1: 4x4",
-                "#3 @ 5,5: 2x2"
-        };
         assertThat(new Logic(testData).partTwo()).isEqualTo("#3");
 
         assertThat(new Logic(processFile(inputFile)).partTwo()).isEqualTo("#742");
@@ -57,9 +53,9 @@ public class Day3 {
         int partOne() {
             int[][] matrix = toMatrix();
             int totalArea = 0;
-            for (int i = 0; i < matrix.length; i++) {
-                for (int j = 0; j < matrix[i].length; j++) {
-                    if (matrix[i][j] > 1) {
+            for (int[] claim : matrix) {
+                for (int point : claim) {
+                    if (point > 1) {
                         totalArea++;
                     }
                 }
