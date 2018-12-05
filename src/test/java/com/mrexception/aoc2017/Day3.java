@@ -1,89 +1,129 @@
 package com.mrexception.aoc2017;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.mrexception.Utils.processFile;
-import static org.assertj.core.api.Assertions.assertThat;
+import com.mrexception.Point;
 
-@RunWith(JUnit4.class)
+@RunWith( JUnit4.class )
 public class Day3 {
-    private Logger log = LoggerFactory.getLogger(Day3.class.getName());
-    private String inputFile = "com/mrexception/aoc2017/day3.txt";
-
-    @Test
-    public void testData() throws Exception {
-        assertThat(processFile(inputFile).length).isGreaterThan(0);
-    }
+    private Logger log = LoggerFactory.getLogger( Day3.class.getName() );
 
     @Test
     public void testPartOne() {
-        assertThat(new Logic(1).partOne()).isEqualTo(0);
-        assertThat(new Logic(12).partOne()).isEqualTo(3);
-        assertThat(new Logic(23).partOne()).isEqualTo(2);
-        assertThat(new Logic(1024).partOne()).isEqualTo(31);
+        assertThat( new Logic( 1 ).partOne() ).isEqualTo( 0 );
+        assertThat( new Logic( 12 ).partOne() ).isEqualTo( 3 );
+        assertThat( new Logic( 23 ).partOne() ).isEqualTo( 2 );
+        assertThat( new Logic( 1024 ).partOne() ).isEqualTo( 31 );
 
-        assertThat(new Logic(27768).partOne()).isEqualTo(58975);
+        assertThat( new Logic( 277678 ).partOne() ).isEqualTo( 475 );
     }
 
-//    @Test
-//    public void testPartTwo() throws Exception {
-//        String[] testData = new String[]{
-//                "5 9 2 8",
-//                "9 4 7 3",
-//                "3 8 6 5"
-//        };
-//        assertThat(new Logic(testData).partTwo()).isEqualTo(9);
-//
-//        assertThat(new Logic(processFile(inputFile)).partTwo()).isEqualTo(308);
-//    }
+    @Test
+    public void testPartTwo() {
+        assertThat( new Logic( 1 ).partTwo() ).isEqualTo( 2 );
+        assertThat( new Logic( 6 ).partTwo() ).isEqualTo( 10 );
+        assertThat( new Logic( 27 ).partTwo() ).isEqualTo( 54 );
+        assertThat( new Logic( 130 ).partTwo() ).isEqualTo( 133 );
+        assertThat( new Logic( 750 ).partTwo() ).isEqualTo( 806 );
+
+        assertThat( new Logic( 277678 ).partTwo() ).isEqualTo( 279138);
+    }
 
     class Logic {
         private final int data;
 
-        Logic(int data) {
+        Logic( int data ) {
             this.data = data;
         }
 
-        private int[][] makeGrid() {
-            int size = findSquare();
-            if (size % 2 == 0) {
-                size++;
+        List<Point> getPoints(int length) {
+            var points = new ArrayList<Point>();
+            int edgeLen = 3;
+            Point p = new Point( 0, 0 );
+            points.add( p );
+            if( length == 1 ) {
+                return points;
             }
-            var grid = new int[size][size];
-            int x = (size / 2) + 1;
-            int y = x;
-            for (int i = 1; i <= data; i++) {
-                grid[x][y] = 1;
-            }
-            return grid;
-        }
-
-        private int findSquare() {
-            double x = Math.sqrt(data);
-            if (x * x == data) {
-                return data;
-            }
-
-            int i = data + 1;
-            while (true) {
-                x = Math.sqrt(i);
-                if (x * x == i) {
-                    return i;
+            p = p.right();
+            points.add( p );
+            int i = 2;
+            while( true ) {
+                if( i == length ) {
+                    return points;
                 }
-                i++;
+                for( int j = 0; j < edgeLen - 2; j++ ) {
+                    p = p.up();
+                    i++;
+                    points.add( p );
+                    if( i == length ) {
+                        return points;
+                    }
+                }
+                for( int j = 0; j < edgeLen - 1; j++ ) {
+                    p = p.left();
+                    i++;
+                    points.add( p );
+                    if( i == length ) {
+                        return points;
+                    }
+                }
+                for( int j = 0; j < edgeLen - 1; j++ ) {
+                    p = p.down();
+                    i++;
+                    points.add( p );
+                    if( i == length ) {
+                        return points;
+                    }
+                }
+                for( int j = 0; j < edgeLen; j++ ) {
+                    p = p.right();
+                    i++;
+                    points.add( p );
+                    if( i == length ) {
+                        return points;
+                    }
+                }
+                edgeLen += 2;
             }
         }
 
         int partOne() {
-            return 0;
+            List<Point> points = getPoints(data);
+            Point point = points.get( points.size() - 1 );
+            return point.manhattanDistance();
         }
 
         int partTwo() {
-            return 0;
+            List<Point> points = getPoints(1000);
+            Map<Point, Integer> map = new HashMap<>();
+            for( Point p : points ) {
+                if( p.equals( Point.ORIGIN ) ) {
+                    map.put( p, 1 );
+                    continue;
+                }
+                int value = 0;
+                for( Point n : p.neighbour8() ) {
+                    if( map.containsKey( n ) ) {
+                        value += map.get( n );
+                    }
+                }
+                if( value > data ) {
+                    return value;
+                }
+                map.put( p, value );
+            }
+            return -1;
         }
     }
 }
