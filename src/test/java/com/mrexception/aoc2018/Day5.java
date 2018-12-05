@@ -24,10 +24,7 @@ public class Day5 {
 
     @Test
     public void testData() throws Exception {
-        processFile(inputFile, lines -> {
-            String data = lines.collect(Collectors.joining("\n"));
-            assertThat(data.length()).isGreaterThan(0);
-        });
+        assertThat(processFile(inputFile).length).isGreaterThan(0);
     }
 
     @Test
