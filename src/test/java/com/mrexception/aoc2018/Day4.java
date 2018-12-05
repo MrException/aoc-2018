@@ -44,10 +44,7 @@ public class Day4 {
 
     @Test
     public void testData() throws Exception {
-        processFile(inputFile, lines -> {
-            String data = lines.collect(Collectors.joining("\n"));
-            assertThat(data.length()).isGreaterThan(0);
-        });
+        assertThat(processFile(inputFile).length).isGreaterThan(0);
     }
 
     @Test
@@ -132,7 +129,7 @@ public class Day4 {
             int sleepEnd = -1;
             int curGuardId = -1;
             for (Record cur : data) {
-                log.info("Date: {}, minute: {}, guard: {}, sleep: {}, awake: {}", cur.dateStr(), cur.minute, cur.guardId, cur.sleep, cur.awake);
+//                log.info("Date: {}, minute: {}, guard: {}, sleep: {}, awake: {}", cur.dateStr(), cur.minute, cur.guardId, cur.sleep, cur.awake);
                 if (cur.guardId > -1) {
                     curGuardId = cur.guardId;
                 }
