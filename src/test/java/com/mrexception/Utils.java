@@ -10,22 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public class Utils {
-    @Deprecated
-    public static void processFile(String path, Consumer<Stream<String>> processor) throws Exception {
-        Resource dataFile = new ClassPathResource(path);
-
-        InputStream resource = dataFile.getInputStream();
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(resource))) {
-            Stream<String> lines = reader.lines();
-            processor.accept(lines);
-        }
-    }
-
     public static String[] processFile(String path) throws Exception {
         Resource dataFile = new ClassPathResource(path);
 
@@ -53,11 +39,6 @@ public class Utils {
         return Arrays.stream(strs)
                 .map(String::trim)
                 .toArray(String[]::new);
-    }
-
-    @Deprecated
-    public static Stream<Integer> toInts(Stream<String> strs) {
-        return strs.map(Integer::parseInt);
     }
 
     public static int[] toInts(String[] strs) {
