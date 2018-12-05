@@ -6,11 +6,12 @@ import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static com.mrexception.Utils.*;
-import static java.lang.Character.*;
+import static com.mrexception.Utils.processFile;
+import static java.lang.Character.toLowerCase;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnit4.class)
@@ -55,42 +56,23 @@ public class Day5 {
         }
 
         int partOne(char[] data) {
-            while (true) {
-                boolean changed = false;
-                for (int i = 0; i < data.length - 1; i++) {
-                    char cur = data[i];
-                    if (cur == 0) {
-                        continue;
-                    }
-                    int j = i + 1;
-                    char next = data[j];
-                    while (next == 0) {
-                        j += 1;
-                        if (j >= data.length) {
-                            break;
-                        }
-                        next = data[j];
-                    }
-                    if (next == 0) {
-                        break;
-                    }
-                    if (Math.abs(cur - next) == 32) {
-                        data[i] = 0;
-                        data[j] = 0;
-                        changed = true;
-                    }
+            var stack = new ArrayDeque<Character>();
+            for (char cur : data) {
+                if (cur == 0) {
+                    continue;
                 }
-                if (!changed) {
-                    int i = 0;
-                    for (char cur : data) {
-                        if (cur != 0) {
-                            i++;
-                        }
-                    }
-
-                    return i;
+                if (stack.isEmpty()) {
+                    stack.push(cur);
+                    continue;
+                }
+                char last = stack.peek();
+                if (Math.abs(cur - last) == 32) {
+                    stack.pop();
+                } else {
+                    stack.push(cur);
                 }
             }
+            return stack.size();
         }
 
         int partTwo() {
