@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class Utils {
+    @Deprecated
     public static void processFile(String path, Consumer<Stream<String>> processor) throws Exception {
         Resource dataFile = new ClassPathResource(path);
 
@@ -29,10 +30,13 @@ public class Utils {
         Resource dataFile = new ClassPathResource(path);
 
         InputStream resource = dataFile.getInputStream();
-        String[] lines ;
+        String[] lines;
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(resource))) {
-            lines = reader.lines().toArray(String[]::new);
+            lines = reader
+                    .lines()
+                    .map(String::trim)
+                    .toArray(String[]::new);
         }
         return lines;
     }
@@ -42,9 +46,16 @@ public class Utils {
     }
 
     public static String[] splitLine(String line, String delimiter) {
-        return line.replaceAll(delimiter, " ").split("\\s+");
+        return trim(line.replaceAll(delimiter, " ").split("\\s+"));
     }
 
+    public static String[] trim(String[] strs) {
+        return Arrays.stream(strs)
+                .map(String::trim)
+                .toArray(String[]::new);
+    }
+
+    @Deprecated
     public static Stream<Integer> toInts(Stream<String> strs) {
         return strs.map(Integer::parseInt);
     }
@@ -58,7 +69,7 @@ public class Utils {
     }
 
     public static int toInt(String str) {
-        return Integer.parseInt(str);
+        return Integer.parseInt(str.trim());
     }
 
     public static <E> E[] shuffle(E[] array) {
@@ -85,7 +96,7 @@ public class Utils {
     public static BiFunction<Double, Double, Boolean> strToComparator(String str) {
         switch (str) {
             case ">":
-                return (x,y) -> x > y;
+                return (x, y) -> x > y;
             case "<":
                 return (x, y) -> x < y;
             case ">=":
