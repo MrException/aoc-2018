@@ -6,6 +6,9 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -49,9 +52,19 @@ public class Utils {
     public static int[] toInts(String[] strs) {
         int[] ints = new int[strs.length];
         for (int i = 0; i < strs.length; i++) {
-            ints[i] = Integer.parseInt(strs[i]);
+            ints[i] = toInt(strs[i]);
         }
         return ints;
+    }
+
+    public static int toInt(String str) {
+        return Integer.parseInt(str);
+    }
+
+    public static <E> E[] shuffle(E[] array) {
+        List<E> list = Arrays.asList(array);
+        Collections.shuffle(list);
+        return list.toArray(array);
     }
 
     public static BiFunction<Double, Double, Double> strToOperator(String str) {
