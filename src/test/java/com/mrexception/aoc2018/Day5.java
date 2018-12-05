@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import static com.mrexception.Utils.processFile;
 import static java.lang.Character.toLowerCase;
