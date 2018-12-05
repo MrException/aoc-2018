@@ -44,59 +44,46 @@ public class Day5 {
     }
 
     class Logic {
-        private final Character[] orig;
+        private final char[] orig;
 
         Logic(String str) {
-            this.orig = new Character[str.length()];
-            char[] chars = str.toCharArray();
-            for (int i = 0; i < chars.length; i++) {
-                orig[i] = chars[i];
-            }
+            this.orig = str.toCharArray();
         }
 
         int partOne() {
             return partOne(orig);
         }
 
-        int partOne(Character[] data) {
+        int partOne(char[] data) {
             while (true) {
                 boolean changed = false;
                 for (int i = 0; i < data.length - 1; i++) {
-                    Character cur = data[i];
-                    if (cur == null) {
+                    char cur = data[i];
+                    if (cur == 0) {
                         continue;
                     }
                     int j = i + 1;
-                    Character next = data[j];
-                    while (next == null) {
+                    char next = data[j];
+                    while (next == 0) {
                         j += 1;
                         if (j >= data.length) {
                             break;
                         }
                         next = data[j];
                     }
-                    if(next == null) {
+                    if (next == 0) {
                         break;
                     }
-                    if (isLowerCase(cur) && isUpperCase(next)) {
-                        if (cur == toLowerCase(next)) {
-                            data[i] = null;
-                            data[j] = null;
-                            changed = true;
-                        }
-                    }
-                    if (isUpperCase(cur) && isLowerCase(next)) {
-                        if (cur == toUpperCase(next)) {
-                            data[i] = null;
-                            data[j] = null;
-                            changed = true;
-                        }
+                    if (Math.abs(cur - next) == 32) {
+                        data[i] = 0;
+                        data[j] = 0;
+                        changed = true;
                     }
                 }
                 if (!changed) {
                     int i = 0;
-                    for (Character cur : data) {
-                        if (cur != null) {
+                    for (char cur : data) {
+                        if (cur != 0) {
                             i++;
                         }
                     }
@@ -108,12 +95,12 @@ public class Day5 {
 
         int partTwo() {
             int best = Integer.MAX_VALUE;
-            Character[] data;
+            char[] data;
             for (char cur = 'a'; cur <= 'z'; cur++) {
                 data = Arrays.copyOf(orig, orig.length);
                 for (int i = 0; i < data.length; i++) {
                     if (cur == toLowerCase(data[i])) {
-                        data[i] = null;
+                        data[i] = 0;
                     }
                 }
                 int result = partOne(data);
