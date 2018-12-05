@@ -1,1 +1,63 @@
 rootProject.name = 'aoc2017'
+
+def tidPattern = ~/[tTxX][0-9]+/
+
+def user = System.getenv( "USERNAME" )
+
+if( user == null ) {
+    user = System.getenv( "USER" )
+}
+
+if( user != null && tidPattern.matcher( user ).matches() ) {
+    def tenProxy = "webproxystatic-on.east.tsl.telus.com"
+    def tenProxyPort = 8080
+
+    println "Setting TEN proxy"
+    System.setProperty( "http.proxyHost", "${tenProxy}" )
+    System.setProperty( "http.proxyPort", "${tenProxyPort}" )
+    System.setProperty( "http.nonProxyHosts", "devtools.thdevops.net" )
+    System.setProperty( "https.proxyHost", "${tenProxy}" )
+    System.setProperty( "https.proxyPort", "${tenProxyPort}" )
+    System.setProperty( "https.nonProxyHosts", "devtools.thdevops.net" )
+}
+
+def proxyMap = ['HTTP_PROXY': 'http', 'HTTPS_PROXY': 'https']
+def foundProxy = false
+for( e in System.getenv() ) {
+    def key = e.key.toUpperCase()
+    if( key in proxyMap ) {
+        foundProxy = true
+        def base = proxyMap[ key ]
+        def url = e.value.toURL()
+        println " - systemProp.${base}.proxy=${url.host}:${url.port}"
+        System.setProperty( "${base}.proxyHost", url.host.toString() )
+        System.setProperty( "${base}.proxyPort", url.port.toString() )
+    }
+}
+
+if( foundProxy ) {
+    System.setProperty( "http.nonProxyHosts", "devtools.thdevops.net" )
+    System.setProperty( "https.nonProxyHosts", "devtools.thdevops.net" )
+}
+
+include "settings"
+include "config"
+include "admin"
+include "discovery"
+include "orchestrator"
+include "gateway"
+
+def otherProjList = file( "gradle/dev-other-projects" )
+if( otherProjList.exists() ) {
+    def projectsToInclude = otherProjList.readLines()
+
+    projectsToInclude.each {proj ->
+        if( !proj.trim().startsWith( "#" ) ) {
+            if( file( proj.trim() ).exists() ) {
+                println "******* Found " + proj + " project. Including as composite build."
+
+                includeBuild proj
+            }
+        }
+    }
+}
