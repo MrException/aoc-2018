@@ -1,15 +1,15 @@
 package com.mrexception;
 
-import static java.lang.Math.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.Math.abs;
+
 public class Point {
     public static final Point ORIGIN = new Point( 0, 0 );
-    private final int x;
-    private final int y;
+    public final int x;
+    public final int y;
 
     public Point( int x, int y ) {
         this.x = x;
