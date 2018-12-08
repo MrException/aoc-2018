@@ -43,23 +43,23 @@ public class Day8 {
 
         int partOne() {
             pointer = 0;
-            Node head = nextNode(false);
-            return head.metadataSum();
+            Node head = nextNode();
+            return head.partOneSum();
         }
 
         int partTwo() {
             pointer = 0;
-            Node head = nextNode(true);
-            return head.metadataSum();
+            Node head = nextNode();
+            return head.partTwoSum();
         }
 
-        private Node nextNode(boolean partTwo) {
+        private Node nextNode() {
             int childCount = data[pointer];
             int metadataCount = data[pointer + 1];
-            Node node = new Node(childCount, metadataCount, partTwo);
+            Node node = new Node(childCount, metadataCount);
             pointer += 2;
             for (int i = 0; i < childCount; i++) {
-                node.children[i] = nextNode(partTwo);
+                node.children[i] = nextNode();
             }
             for (int i = 0; i < metadataCount; i++) {
                 node.metadata[i] = data[pointer];
@@ -72,29 +72,24 @@ public class Day8 {
     class Node {
         Node[] children;
         int[] metadata;
-        boolean partTwo;
 
-        Node(int childCount, int metadataCount, boolean partTwo) {
+        Node(int childCount, int metadataCount) {
             children = new Node[childCount];
             metadata = new int[metadataCount];
-            this.partTwo = partTwo;
         }
 
-        int metadataSum() {
+        int partOneSum() {
             int sum = 0;
-            if (partTwo) {
-                return partTwoSum();
-            }
             for (int i : metadata) {
                 sum += i;
             }
             for (Node child : children) {
-                sum += child.metadataSum();
+                sum += child.partOneSum();
             }
             return sum;
         }
 
-        private int partTwoSum() {
+        int partTwoSum() {
             int sum = 0;
 
             if (children.length == 0) {
@@ -104,7 +99,7 @@ public class Day8 {
             } else {
                 for (int i : metadata) {
                     if (i <= children.length) {
-                        sum += children[i - 1].metadataSum();
+                        sum += children[i - 1].partTwoSum();
                     }
                 }
             }
