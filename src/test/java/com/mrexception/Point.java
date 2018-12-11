@@ -1,15 +1,18 @@
 package com.mrexception;
 
+import static java.lang.Math.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static java.lang.Math.abs;
-
 public class Point {
     public static final Point ORIGIN = new Point( 0, 0 );
-    public final int x;
-    public final int y;
+    public int x;
+    public int y;
+
+    private int dx = 0;
+    private int dy = 0;
 
     public Point( int x, int y ) {
         this.x = x;
@@ -60,6 +63,16 @@ public class Point {
         points.add(down());
         points.add(down().right());
         return points;
+    }
+
+    public void setVelocity(int dx, int dy) {
+        this.dx = dx;
+        this.dy = dy;
+    }
+
+    public void move() {
+        this.x += dx;
+        this.y += dy;
     }
 
     @Override
