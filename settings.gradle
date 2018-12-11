@@ -1,4 +1,4 @@
-rootProject.name = 'aoc2017'
+rootProject.name = 'AOC'
 
 def tidPattern = ~/[tTxX][0-9]+/
 
@@ -40,24 +40,3 @@ if( foundProxy ) {
     System.setProperty( "https.nonProxyHosts", "devtools.thdevops.net" )
 }
 
-include "settings"
-include "config"
-include "admin"
-include "discovery"
-include "orchestrator"
-include "gateway"
-
-def otherProjList = file( "gradle/dev-other-projects" )
-if( otherProjList.exists() ) {
-    def projectsToInclude = otherProjList.readLines()
-
-    projectsToInclude.each {proj ->
-        if( !proj.trim().startsWith( "#" ) ) {
-            if( file( proj.trim() ).exists() ) {
-                println "******* Found " + proj + " project. Including as composite build."
-
-                includeBuild proj
-            }
-        }
-    }
-}
