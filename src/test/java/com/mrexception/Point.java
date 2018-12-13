@@ -1,46 +1,53 @@
 package com.mrexception;
 
-import static java.lang.Math.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static java.lang.Math.abs;
+
 public class Point {
-    public static final Point ORIGIN = new Point( 0, 0 );
+    public static final Point ORIGIN = new Point(0, 0);
+    public static final Point UP = new Point(0, -1);
+    public static final Point DOWN = new Point(0, 1);
+    public static final Point LEFT = new Point(-1, 0);
+    public static final Point RIGHT = new Point(1, 0);
     public int x;
     public int y;
 
-    private int dx = 0;
-    private int dy = 0;
+    public Point velocity;
 
-    public Point( int x, int y ) {
+    public Point(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
+    public String toString() {
+        return x + "," + y;
+    }
+
     public Point up() {
-        return new Point( x, y + 1 );
+        return new Point(x, y + 1);
     }
 
     public Point down() {
-        return new Point( x, y - 1 );
+        return new Point(x, y - 1);
     }
 
     public Point left() {
-        return new Point( x - 1, y );
+        return new Point(x - 1, y);
     }
 
     public Point right() {
-        return new Point( x + 1, y );
+        return new Point(x + 1, y);
     }
 
     public int manhattanDistance() {
-        return manhattanDistance( ORIGIN );
+        return manhattanDistance(ORIGIN);
     }
 
-    public int manhattanDistance( Point b ) {
-        return abs( x - b.x ) + abs( y - b.y );
+    public int manhattanDistance(Point b) {
+        return abs(x - b.x) + abs(y - b.y);
     }
 
     public List<Point> neighbour4() {
@@ -66,30 +73,57 @@ public class Point {
     }
 
     public void setVelocity(int dx, int dy) {
-        this.dx = dx;
-        this.dy = dy;
+        velocity = new Point(dx, dy);
+    }
+
+    public void setVelocity(Point v) {
+        velocity = v;
     }
 
     public void move() {
-        this.x += dx;
-        this.y += dy;
+        this.x += velocity.x;
+        this.y += velocity.y;
+    }
+
+    public void turnLeft() {
+        if (velocity.equals(UP)) {
+            velocity = LEFT;
+        } else if (velocity.equals(DOWN)) {
+            velocity = RIGHT;
+        } else if (velocity.equals(LEFT)) {
+            velocity = DOWN;
+        } else if (velocity.equals(RIGHT)) {
+            velocity = UP;
+        }
+    }
+
+    public void turnRight() {
+        if (velocity.equals(UP)) {
+            velocity = RIGHT;
+        } else if (velocity.equals(DOWN)) {
+            velocity = LEFT;
+        } else if (velocity.equals(LEFT)) {
+            velocity = UP;
+        } else if (velocity.equals(RIGHT)) {
+            velocity = DOWN;
+        }
     }
 
     @Override
-    public boolean equals( Object o ) {
-        if( this == o ) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if( o == null || getClass() != o.getClass() ) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Point point = (Point) o;
         return x == point.x &&
-          y == point.y;
+                y == point.y;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash( x, y );
+        return Objects.hash(x, y);
     }
 }

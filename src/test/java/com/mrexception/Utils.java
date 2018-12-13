@@ -1,5 +1,8 @@
 package com.mrexception;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,21 +11,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 public class Utils {
-    public static String[] processFile( String path ) throws Exception {
+    public static String[] processFile(String path ) throws Exception {
+        return processFile(path, true);
+    }
+
+    public static String[] processFile(String path, boolean trim) throws Exception {
         Resource dataFile = new ClassPathResource( path );
 
         InputStream resource = dataFile.getInputStream();
         String[] lines;
-        try( BufferedReader reader = new BufferedReader(
-          new InputStreamReader( resource ) ) ) {
+        try(BufferedReader reader = new BufferedReader(
+                new InputStreamReader( resource ) ) ) {
             lines = reader
-              .lines()
-              .map( String::trim )
-              .toArray( String[]::new );
+                    .lines()
+                    .map(s -> trim ? s.trim() : s)
+                    .toArray( String[]::new );
         }
         return lines;
     }
