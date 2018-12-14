@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
+@SuppressWarnings("WeakerAccess")
 public class Utils {
     public static String[] processFile(String path) throws Exception {
         return processFile(path, true);
