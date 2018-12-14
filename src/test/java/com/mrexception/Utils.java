@@ -12,73 +12,85 @@ import java.util.List;
 import java.util.function.BiFunction;
 
 public class Utils {
-    public static String[] processFile(String path ) throws Exception {
+    public static String[] processFile(String path) throws Exception {
         return processFile(path, true);
     }
 
     public static String[] processFile(String path, boolean trim) throws Exception {
-        Resource dataFile = new ClassPathResource( path );
+        Resource dataFile = new ClassPathResource(path);
 
         InputStream resource = dataFile.getInputStream();
         String[] lines;
-        try(BufferedReader reader = new BufferedReader(
-                new InputStreamReader( resource ) ) ) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resource))) {
             lines = reader
                     .lines()
                     .map(s -> trim ? s.trim() : s)
-                    .toArray( String[]::new );
+                    .toArray(String[]::new);
         }
         return lines;
     }
 
-    public static String[] splitLine( String line ) {
-        return splitLine( line, ",", true );
+    public static String[] splitLine(String line) {
+        return splitLine(line, ",", true);
     }
 
-    public static String[] splitLine( String line, String delimiter, boolean andSpace ) {
-        if( andSpace ) {
-            return splitLine( line.replaceAll( delimiter, " " ), " " );
+    public static String[] splitLine(String line, String delimiter, boolean andSpace) {
+        if (andSpace) {
+            return splitLine(line.replaceAll(delimiter, " "), " ");
         } else {
-            return splitLine( line, delimiter );
+            return splitLine(line, delimiter);
         }
     }
 
-    public static String[] splitLine( String line, String delimiter ) {
-        return trim( line.split( delimiter ) );
+    public static String[] splitLine(String line, String delimiter) {
+        return trim(line.split(delimiter));
     }
 
-    public static String[] trim( String[] strs ) {
-        return Arrays.stream( strs )
-          .map( String::trim )
-          .toArray( String[]::new );
+    public static String[] trim(String[] strs) {
+        return Arrays.stream(strs)
+                .map(String::trim)
+                .toArray(String[]::new);
     }
 
-    public static int[] toInts( String[] strs ) {
-        int[] ints = new int[ strs.length ];
-        for( int i = 0; i < strs.length; i++ ) {
-            ints[ i ] = toInt( strs[ i ] );
+    public static int[] toInts(String[] strs) {
+        int[] ints = new int[strs.length];
+        for (int i = 0; i < strs.length; i++) {
+            ints[i] = toInt(strs[i]);
         }
         return ints;
     }
 
-    public static int toInt( String str ) {
-        return Integer.parseInt( str.trim() );
+    public static int[] toInts(char[] chars) {
+        int[] ints = new int[chars.length];
+        for (int i = 0; i < chars.length; i++) {
+            ints[i] = toInt(chars[i]);
+        }
+        return ints;
     }
 
-    public static <E> E[] shuffle( E[] array ) {
-        List<E> list = Arrays.asList( array );
-        Collections.shuffle( list );
-        return list.toArray( array );
+    public static int toInt(String str) {
+        return Integer.parseInt(str.trim());
     }
 
-    public static BiFunction<Double, Double, Double> strToOperator( String str ) {
-        switch( str ) {
+    public static int toInt(char c) {
+        return Integer.parseInt("" + c);
+    }
+
+    public static <E> E[] shuffle(E[] array) {
+        List<E> list = Arrays.asList(array);
+        Collections.shuffle(list);
+        return list.toArray(array);
+    }
+
+    public static BiFunction<Double, Double, Double> strToOperator(String str) {
+        switch (str) {
             case "+":
                 return Double::sum;
             case "*":
-                return ( x, y ) -> x * y;
+                return (x, y) -> x * y;
             case "/":
-                return ( x, y ) -> x / y;
+                return (x, y) -> x / y;
             case "**":
                 return Math::pow;
             default:
@@ -86,20 +98,20 @@ public class Utils {
         }
     }
 
-    public static BiFunction<Double, Double, Boolean> strToComparator( String str ) {
-        switch( str ) {
+    public static BiFunction<Double, Double, Boolean> strToComparator(String str) {
+        switch (str) {
             case ">":
-                return ( x, y ) -> x > y;
+                return (x, y) -> x > y;
             case "<":
-                return ( x, y ) -> x < y;
+                return (x, y) -> x < y;
             case ">=":
-                return ( x, y ) -> x >= y;
+                return (x, y) -> x >= y;
             case "<=":
-                return ( x, y ) -> x <= y;
+                return (x, y) -> x <= y;
             case "==":
                 return Double::equals;
             case "!=":
-                return ( x, y ) -> !x.equals( y );
+                return (x, y) -> !x.equals(y);
             default:
                 return null;
         }
