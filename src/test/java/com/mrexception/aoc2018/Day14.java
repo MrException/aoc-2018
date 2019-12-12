@@ -37,6 +37,8 @@ public class Day14 {
     private int end;
 
     private void buildScoreboard() {
+        // build a single giant scoreboard once
+        // it doesn't change based on input
         if (scoreboard != null) {
             return;
         }
