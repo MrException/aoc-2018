@@ -1,13 +1,19 @@
 package com.mrexception.aoc2019;
 
-import com.mrexception.Point3D;
+import static org.assertj.core.api.Assertions.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.google.common.collect.MultimapBuilder;
+import com.google.common.collect.SetMultimap;
+import com.mrexception.Point3D;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(JUnit4.class)
 public class Day12 {
@@ -21,7 +27,7 @@ public class Day12 {
     };
 
     @Test
-    public void testPartOne() throws Exception {
+    public void testPartOne() {
         Point3D[] testIn1 = new Point3D[]{
                 new Point3D(-1, 0, 2),
                 new Point3D(2, -10, -7),
@@ -44,7 +50,7 @@ public class Day12 {
     }
 
     @Test
-    public void testPartTwo() throws Exception {
+    public void testPartTwo() {
         Point3D[] testIn1 = new Point3D[]{
                 new Point3D(-1, 0, 2),
                 new Point3D(2, -10, -7),
@@ -60,24 +66,27 @@ public class Day12 {
                 new Point3D(2, -7, 3),
                 new Point3D(9, -8, -3)
         };
-        assertThat(new Logic(testIn2, 5000000000).partTwo()).isEqualTo(2772);
+//        assertThat(new Logic(testIn2, 500000000).partTwo()).isEqualTo(2772);
 
-        assertThat(new Logic(moons, 10000000).partTwo()).isEqualTo(2772);
+        assertThat(new Logic(moons, 250000000).partTwo()).isEqualTo(2772);
     }
 
     class Logic {
 
         private final Point3D[] moons;
         private final long iterations;
-        private final int[] hashes;
+        //        private final SetMultimap<Integer, String> hashes;
+        private final Set<Integer> energies;
 
-        public Logic(Point3D[] moons, long iterations) {
+        @SuppressWarnings("UnstableApiUsage")
+        public Logic(Point3D[] moons, int iterations) {
             this.moons = moons;
             this.iterations = iterations;
-            hashes = new int[iterations];
+//            hashes = MultimapBuilder.hashKeys(iterations / 2).hashSetValues(1).build();
+            energies = new HashSet<>(iterations / 2);
         }
 
-        private void updateVel(Point3D a, Point3D b) {
+        private void updateVal(Point3D a, Point3D b) {
             if (a.x != b.x) {
                 if (a.x > b.x) {
                     a.velocity.x -= 1;
@@ -112,11 +121,35 @@ public class Day12 {
         int calcEnergy() {
             int e = 0;
 
-            e += (Math.abs(moons[0].x) + Math.abs(moons[0].y) + Math.abs(moons[0].z)) * (Math.abs(moons[0].velocity.x) + Math.abs(moons[0].velocity.y) + Math.abs(moons[0].velocity.z));
-            e += (Math.abs(moons[1].x) + Math.abs(moons[1].y) + Math.abs(moons[1].z)) * (Math.abs(moons[1].velocity.x) + Math.abs(moons[1].velocity.y) + Math.abs(moons[1].velocity.z));
-            e += (Math.abs(moons[2].x) + Math.abs(moons[2].y) + Math.abs(moons[2].z)) * (Math.abs(moons[2].velocity.x) + Math.abs(moons[2].velocity.y) + Math.abs(moons[2].velocity.z));
-            e += (Math.abs(moons[3].x) + Math.abs(moons[3].y) + Math.abs(moons[3].z)) * (Math.abs(moons[3].velocity.x) + Math.abs(moons[3].velocity.y) + Math.abs(moons[3].velocity.z));
+            e += (Math.abs(moons[0].x) + Math.abs(moons[0].y) + Math.abs(moons[0].z)) * (Math.abs(moons[0].velocity.x) + Math.abs(moons[0].velocity.y) +
+                    Math.abs(moons[0].velocity.z));
+            e += (Math.abs(moons[1].x) + Math.abs(moons[1].y) + Math.abs(moons[1].z)) * (Math.abs(moons[1].velocity.x) + Math.abs(moons[1].velocity.y) +
+                    Math.abs(moons[1].velocity.z));
+            e += (Math.abs(moons[2].x) + Math.abs(moons[2].y) + Math.abs(moons[2].z)) * (Math.abs(moons[2].velocity.x) + Math.abs(moons[2].velocity.y) +
+                    Math.abs(moons[2].velocity.z));
+            e += (Math.abs(moons[3].x) + Math.abs(moons[3].y) + Math.abs(moons[3].z)) * (Math.abs(moons[3].velocity.x) + Math.abs(moons[3].velocity.y) +
+                    Math.abs(moons[3].velocity.z));
             return e;
+        }
+
+        int checksumi(int c, int v) {
+            c += v;
+            c = c << 3 | c >> (32 - 3); // rotate a little
+            c ^= 0xFFFFFFFF; // invert just for fun
+            return c;
+        }
+
+        int checksum() {
+            int c = 0;
+            for (int i = 0; i < 4; i++) {
+                c = checksumi(c, moons[i].x);
+                c = checksumi(c, moons[i].y);
+                c = checksumi(c, moons[i].z);
+                c = checksumi(c, moons[i].velocity.x);
+                c = checksumi(c, moons[i].velocity.y);
+                c = checksumi(c, moons[i].velocity.z);
+            }
+            return c;
         }
 
         void print(int i) {
@@ -125,43 +158,43 @@ public class Day12 {
             log.info(moons[1].toString());
             log.info(moons[2].toString());
             log.info(moons[3].toString());
-            log.info("Hash - {}", hashes[i]);
+//            log.info("Hash - {}", hashes[i]);
             log.info("\n");
         }
 
-        int hash() {
+        String hash() {
             String m0 = String.format("%s-%s-%s-%s-%s-%s", moons[0].x, moons[0].y, moons[0].z, moons[0].velocity.x, moons[0].velocity.y, moons[0].velocity.z);
             String m1 = String.format("%s-%s-%s-%s-%s-%s", moons[1].x, moons[1].y, moons[1].z, moons[1].velocity.x, moons[1].velocity.y, moons[1].velocity.z);
             String m2 = String.format("%s-%s-%s-%s-%s-%s", moons[2].x, moons[2].y, moons[2].z, moons[2].velocity.x, moons[2].velocity.y, moons[2].velocity.z);
             String m3 = String.format("%s-%s-%s-%s-%s-%s", moons[3].x, moons[3].y, moons[3].z, moons[3].velocity.x, moons[3].velocity.y, moons[3].velocity.z);
-            return String.format("%s-%s-%s-%s", m0, m1, m2, m3).hashCode();
+            return String.format("%s-%s-%s-%s", m0, m1, m2, m3);
         }
 
-        boolean seen(int hash, int pos) {
-            for (int i = 0; i < pos; i++) {
-                if (hash == hashes[i]) {
-                    return true;
-                }
-            }
-            return false;
+        boolean seen(int energy) {
+            return energies.contains(energy);
+//            return hashes.containsEntry(energy, hash);
+        }
+
+        private void step() {
+            updateVal(moons[0], moons[1]);
+            updateVal(moons[0], moons[2]);
+            updateVal(moons[0], moons[3]);
+
+            updateVal(moons[1], moons[2]);
+            updateVal(moons[1], moons[3]);
+
+            updateVal(moons[2], moons[3]);
+
+            moons[0].move();
+            moons[1].move();
+            moons[2].move();
+            moons[3].move();
         }
 
         int partOne() {
 //            print(0);
             for (int i = 0; i < iterations; i++) {
-                updateVel(moons[0], moons[1]);
-                updateVel(moons[0], moons[2]);
-                updateVel(moons[0], moons[3]);
-
-                updateVel(moons[1], moons[2]);
-                updateVel(moons[1], moons[3]);
-
-                updateVel(moons[2], moons[3]);
-
-                moons[0].move();
-                moons[1].move();
-                moons[2].move();
-                moons[3].move();
+                step();
 
 //                if (i > 0 && i % 10 == 0) {
 //                print(i + 1);
@@ -172,29 +205,17 @@ public class Day12 {
 
         int partTwo() {
             for (int i = 0; i < iterations; i++) {
-                updateVel(moons[0], moons[1]);
-                updateVel(moons[0], moons[2]);
-                updateVel(moons[0], moons[3]);
+                step();
 
-                updateVel(moons[1], moons[2]);
-                updateVel(moons[1], moons[3]);
-
-                updateVel(moons[2], moons[3]);
-
-                moons[0].move();
-                moons[1].move();
-                moons[2].move();
-                moons[3].move();
-
-                int hash = hash();
-                if (seen(hash, i)) {
+                int checksum = checksum();
+//                String hash = hash();
+                if (seen(checksum)) {
                     return i;
                 } else {
-                    hashes[i] = hash;
+                    energies.add(checksum);
                 }
-//                print(i);
 
-                if (i > 0 && i % 1000 == 0) {
+                if (i > 0 && i % 100000 == 0) {
                     print(i);
                 }
             }

@@ -1,42 +1,22 @@
 rootProject.name = 'AOC'
 
-def tidPattern = ~/[tTxX][0-9]+/
-
-def user = System.getenv( "USERNAME" )
-
-if( user == null ) {
-    user = System.getenv( "USER" )
+boolean onTEN = false
+try {
+    onTEN = InetAddress.getByName( "webproxystatic-bc.tsl.telus.com" ).isReachable( 200 );
+} catch (e) {
+    // ignore
 }
 
-if( user != null && tidPattern.matcher( user ).matches() ) {
-    def tenProxy = "webproxystatic-on.east.tsl.telus.com"
+if( onTEN ) {
+    def tenProxy = "webproxystatic-bc.tsl.telus.com"
     def tenProxyPort = 8080
 
-    println "Setting TEN proxy"
+    println "Running on TEN - Setting Proxy"
     System.setProperty( "http.proxyHost", "${tenProxy}" )
     System.setProperty( "http.proxyPort", "${tenProxyPort}" )
     System.setProperty( "http.nonProxyHosts", "devtools.thdevops.net" )
     System.setProperty( "https.proxyHost", "${tenProxy}" )
     System.setProperty( "https.proxyPort", "${tenProxyPort}" )
-    System.setProperty( "https.nonProxyHosts", "devtools.thdevops.net" )
-}
-
-def proxyMap = ['HTTP_PROXY': 'http', 'HTTPS_PROXY': 'https']
-def foundProxy = false
-for( e in System.getenv() ) {
-    def key = e.key.toUpperCase()
-    if( key in proxyMap ) {
-        foundProxy = true
-        def base = proxyMap[ key ]
-        def url = e.value.toURL()
-        println " - systemProp.${base}.proxy=${url.host}:${url.port}"
-        System.setProperty( "${base}.proxyHost", url.host.toString() )
-        System.setProperty( "${base}.proxyPort", url.port.toString() )
-    }
-}
-
-if( foundProxy ) {
-    System.setProperty( "http.nonProxyHosts", "devtools.thdevops.net" )
     System.setProperty( "https.nonProxyHosts", "devtools.thdevops.net" )
 }
 
