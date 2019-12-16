@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = "2.1.1.RELEASE"
+        springBootVersion = "2.2.2.RELEASE"
     }
     repositories {
         mavenCentral()
@@ -27,8 +27,8 @@ test {
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter"
-    implementation "com.google.guava:guava:27.0-jre"
-    implementation "org.apache.commons:commons-text:1.6"
+    implementation "com.google.guava:guava:28.1-jre"
+    implementation "org.apache.commons:commons-text:1.8"
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'org.projectlombok:lombok'
 
