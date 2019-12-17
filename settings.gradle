@@ -1,4 +1,4 @@
-rootProject.name = 'AOC'
+rootProject.name = 'aoc-java'
 
 boolean onTEN = false
 try {
