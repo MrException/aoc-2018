@@ -1,19 +1,16 @@
 package com.mrexception.aoc2019;
 
-import static org.assertj.core.api.Assertions.*;
-
+import com.mrexception.Point3D;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.SetMultimap;
-import com.mrexception.Point3D;
-
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnit4.class)
 public class Day12 {
