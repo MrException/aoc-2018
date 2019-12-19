@@ -43,7 +43,7 @@ public class Day4 {
         assertThat(passesP2(123456789)).isFalse();
         assertThat(passesP2(11223344)).isTrue();
 
-        assertThat(partTwo(start, end)).isEqualTo(1675);
+        assertThat(partTwo(start, end)).isEqualTo(1142);
     }
 
     static boolean passesP1(int in) {
