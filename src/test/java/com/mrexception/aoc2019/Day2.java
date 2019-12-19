@@ -57,20 +57,17 @@ public class Day2 {
 
     int partOne(IntCodeComp computer, int noun, int verb) {
         if (noun > -1 && verb > -1) {
-            computer.runWithInput(noun, verb);
+            return computer.runWithInput(noun, verb);
         } else {
-            computer.run();
+            return computer.run();
         }
-        return computer.valueAt(0);
     }
 
     int partTwo(IntCodeComp computer) {
         final int desired = 19690720;
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 100; j++) {
-                computer.reboot();
-                computer.runWithInput(i, j);
-                int output = computer.valueAt(0);
+                int output = computer.runWithInput(i, j);
                 if (output == desired) {
                     return (100 * i) + j;
                 }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Opcode {
-    ADD(1), MULT(2), INPUT(3), OUTPUT(4), HALT(99);
+    ADD(1), MULT(2), INPUT(3), OUTPUT(4), JIT(5), JIF(6), LT(7), EQ(8), HALT(99);
 
     private static final Map<Integer, Opcode> map = new HashMap<>();
 

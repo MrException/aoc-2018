@@ -7,11 +7,22 @@ public class IntCodeComp {
     private final int[] program;
     private int[] memory;
     private int ptr;
-    private List<Integer> outputs = new ArrayList<>();
+    private final List<Integer> outputs = new ArrayList<>();
 
     public IntCodeComp(int[] program) {
         this.program = program;
-        this.reboot();
+    }
+
+    public void boot() {
+        ptr = 0;
+        memory = new int[program.length];
+        System.arraycopy(program, 0, memory, 0, program.length);
+    }
+
+    public int runWithInput(int noun, int verb) {
+        program[1] = noun;
+        program[2] = verb;
+        return run();
     }
 
     protected Instruction nextInstruction() {
@@ -20,41 +31,33 @@ public class IntCodeComp {
         return instruction;
     }
 
-    public void reboot() {
-        ptr = 0;
-        memory = new int[program.length];
-        System.arraycopy(program, 0, memory, 0, program.length);
-    }
+    public int run(int... inputs) {
+        boot();
 
-    public void run() {
-        Instruction next = nextInstruction();
-        while (next.getOpcode() != Opcode.HALT) {
-            next.exec(memory);
-            next = nextInstruction();
-        }
-    }
-
-    public void runWithInput(int noun, int verb) {
-        memory[1] = noun;
-        memory[2] = verb;
-        run();
-    }
-
-    public List<Integer> runWithInput(int[] inputs) {
         int nextInput = 0;
         Instruction next = nextInstruction();
         while (next.getOpcode() != Opcode.HALT) {
+            Integer input = null;
             if (next.getOpcode() == Opcode.INPUT) {
-                next.input(inputs[nextInput]);
+                input = inputs[nextInput];
                 nextInput++;
             }
-            int output = next.exec(memory);
+            int output = next.exec(memory, input);
             if (next.getOpcode() == Opcode.OUTPUT) {
                 outputs.add(output);
+            } else if (next.getOpcode() == Opcode.JIT || next.getOpcode() == Opcode.JIF) {
+                if (output > -1) {
+                    ptr = output;
+                }
             }
             next = nextInstruction();
         }
-        return outputs;
+
+        if (outputs.isEmpty()) {
+            return memory[0];
+        }
+
+        return outputs.get(outputs.size() - 1);
     }
 
     public int valueAt(int address) {
