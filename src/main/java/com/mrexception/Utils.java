@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -116,5 +117,31 @@ public class Utils {
             default:
                 return null;
         }
+    }
+
+    public static List<List<Integer>> permutations(Integer[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        permuteHelper(0, nums, result);
+        return result;
+    }
+
+    private static void permuteHelper(int start, Integer[] nums, List<List<Integer>> result) {
+        if (start == nums.length - 1) {
+            ArrayList<Integer> list = new ArrayList<>(Arrays.asList(nums));
+            result.add(list);
+            return;
+        }
+
+        for (int i = start; i < nums.length; i++) {
+            swap(nums, i, start);
+            permuteHelper(start + 1, nums, result);
+            swap(nums, i, start);
+        }
+    }
+
+    private static <T> void swap(T[] input, int a, int b) {
+        T tmp = input[a];
+        input[a] = input[b];
+        input[b] = tmp;
     }
 }
