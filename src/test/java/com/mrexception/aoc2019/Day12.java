@@ -46,7 +46,7 @@ public class Day12 {
         assertThat(new Logic(moons, 1000).partOne()).isEqualTo(6735);
     }
 
-    @Test
+//    @Test
     public void testPartTwo() {
         Point3D[] testIn1 = new Point3D[]{
                 new Point3D(-1, 0, 2),
