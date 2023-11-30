@@ -1,15 +1,12 @@
 package com.mrexception.aoc2017;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mrexception.Utils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(JUnit4.class)
 public class Day2 {
     private Logger log = LoggerFactory.getLogger(Day2.class.getName());
     private String inputFile = "com/mrexception/aoc2017/day2.txt";
@@ -49,7 +46,8 @@ public class Day2 {
         Logic(String[] strs) {
             data = new int[strs.length][];
             for (int i = 0; i < strs.length; i++) {
-                data[i] = toInts(splitLine(strs[i]));
+                String[] strings = splitLine(strs[i]);
+                data[i] = toInts(strings);
             }
         }
 

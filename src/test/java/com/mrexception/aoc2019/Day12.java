@@ -1,9 +1,7 @@
 package com.mrexception.aoc2019;
 
 import com.mrexception.Point3D;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +10,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(JUnit4.class)
 public class Day12 {
     private Logger log = LoggerFactory.getLogger(getClass().getName());
 

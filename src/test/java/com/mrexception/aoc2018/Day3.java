@@ -1,16 +1,13 @@
 package com.mrexception.aoc2018;
 
 import lombok.Data;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.mrexception.Utils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(JUnit4.class)
 public class Day3 {
     private Logger log = LoggerFactory.getLogger(getClass().getName());
     private String inputFile = "com/mrexception/aoc2018/day3.txt";

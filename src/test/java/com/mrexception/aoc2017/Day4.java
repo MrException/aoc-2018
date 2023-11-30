@@ -7,13 +7,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RunWith( JUnit4.class )
 public class Day4 {
     private Logger log = LoggerFactory.getLogger( Day4.class.getName() );
     private String inputFile = "com/mrexception/aoc2017/day4.txt";

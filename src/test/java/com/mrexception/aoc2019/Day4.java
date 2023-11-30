@@ -1,13 +1,10 @@
 package com.mrexception.aoc2019;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.mrexception.Utils.toInts;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(JUnit4.class)
 public class Day4 {
     // puzzle input
     int start = 172930;

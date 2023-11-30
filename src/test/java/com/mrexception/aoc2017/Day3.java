@@ -7,15 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mrexception.Point;
 
-@RunWith( JUnit4.class )
 public class Day3 {
     private Logger log = LoggerFactory.getLogger( Day3.class.getName() );
 

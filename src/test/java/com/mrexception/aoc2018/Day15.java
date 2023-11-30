@@ -3,10 +3,8 @@ package com.mrexception.aoc2018;
 import com.mrexception.Map2D;
 import com.mrexception.MapNode;
 import com.mrexception.MapParser;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +17,6 @@ import java.util.function.Function;
 import static com.mrexception.Utils.processFile;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(JUnit4.class)
 public class Day15 {
     private Logger log = LoggerFactory.getLogger("Day15");
     private String inputFile = "com/mrexception/aoc2018/day15.txt";
@@ -28,7 +25,7 @@ public class Day15 {
     private List<Actor> goblins;
     private List<Actor> elves;
 
-    @Before
+    @BeforeEach
     public void reset() {
         map = null;
         goblins = new ArrayList<>();

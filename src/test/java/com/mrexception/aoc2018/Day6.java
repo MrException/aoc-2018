@@ -1,9 +1,7 @@
 package com.mrexception.aoc2018;
 
 import com.mrexception.Point;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +11,6 @@ import java.util.Map;
 import static com.mrexception.Utils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(JUnit4.class)
 public class Day6 {
     private String inputFile = "com/mrexception/aoc2018/day6.txt";
 

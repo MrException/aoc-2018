@@ -39,7 +39,7 @@ public class Utils {
 
     public static String[] splitLine(String line, String delimiter, boolean andSpace) {
         if (andSpace) {
-            return splitLine(line.replaceAll(delimiter, " "), " ");
+            return splitLine(line.replaceAll(delimiter, " "), "\\s+");
         } else {
             return splitLine(line, delimiter);
         }
@@ -52,6 +52,7 @@ public class Utils {
     public static String[] trim(String[] strs) {
         return Arrays.stream(strs)
                 .map(String::trim)
+                .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
     }
 

@@ -1,6 +1,7 @@
 package com.mrexception;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import static com.mrexception.Utils.splitLine;
 import static org.assertj.core.api.Assertions.assertThat;

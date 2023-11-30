@@ -1,8 +1,6 @@
 package com.mrexception.aoc2018;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
@@ -10,7 +8,6 @@ import static com.mrexception.Utils.processFile;
 import static com.mrexception.Utils.splitLine;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(JUnit4.class)
 public class Day7 {
     private String inputFile = "com/mrexception/aoc2018/day7.txt";
 

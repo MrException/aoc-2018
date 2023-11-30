@@ -2,15 +2,12 @@ package com.mrexception.aoc2019;
 
 import com.mrexception.aoc2019.intcode.IntCodeComp;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import static com.mrexception.Utils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@RunWith(JUnit4.class)
 public class Day2 {
     private String inputFile = "com/mrexception/aoc2019/day2.txt";
 

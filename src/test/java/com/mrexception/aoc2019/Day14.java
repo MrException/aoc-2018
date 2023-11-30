@@ -3,9 +3,7 @@ package com.mrexception.aoc2019;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +13,6 @@ import static com.mrexception.Utils.splitLine;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-@RunWith(JUnit4.class)
 public class Day14 {
     private String inputFile = "com/mrexception/aoc2019/day14.txt";
 
