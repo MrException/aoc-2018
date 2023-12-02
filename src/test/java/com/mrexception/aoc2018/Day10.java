@@ -67,7 +67,7 @@ public class Day10 {
     @Test
     public void testPartTwo() throws Exception {
         assertThat( new Logic( testData ).run( true ) ).isEqualTo( 3 );
-        assertThat( new Logic( processFile( inputFile ) ).run( true ) ).isEqualTo( 0 );
+        assertThat( new Logic( processFile( inputFile ) ).run( true ) ).isEqualTo( 10634 );
     }
 
     class Logic {
