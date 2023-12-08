@@ -1,12 +1,14 @@
+package com.mrexception.aoc2023;
+
 import java.util.*;
 import java.util.stream.*;
 import java.util.function.*;
 import java.io.*;
 import java.nio.file.*;
 
-public class Day2 {
+public class Day2b {
   String[] readFile() throws Exception {
-    String filePath = "./day2.txt";
+    String filePath = "day2.txt";
     String content = new String(Files.readAllBytes(Paths.get(filePath)));
     return content.split("\n");
   }
@@ -58,7 +60,7 @@ public class Day2 {
 
   private int partOne(String[] input) {
     return parseGames(input)
-        .filter(Day2::gameValid)
+        .filter(Day2b::gameValid)
         .map(game -> game.id)
         .mapToInt(Integer::intValue)
         .sum();
@@ -66,7 +68,7 @@ public class Day2 {
 
   private int partTwo(String[] input) {
     return parseGames(input)
-        .map(Day2::gamePower)
+        .map(Day2b::gamePower)
         .mapToInt(Integer::intValue).sum();
   }
 
