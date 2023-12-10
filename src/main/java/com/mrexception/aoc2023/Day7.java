@@ -1,6 +1,7 @@
 package com.mrexception.aoc2023;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.*;
 import java.util.function.*;
 import java.io.*;
@@ -37,7 +38,8 @@ public class Day7 {
       Map.entry('5', 4),
       Map.entry('4', 3),
       Map.entry('3', 2),
-      Map.entry('2', 1));
+      Map.entry('2', 1),
+      Map.entry('S', 0));
 
   enum HandRank {
     HIGH_C, ONE_P, TWO_P, THREE_OK, FULL_H, FOUR_OK, FIVE_OK
@@ -58,13 +60,13 @@ public class Day7 {
   }
 
   public static void main(String[] args) throws Exception {
-    assert rankHand("AA4KK") == HandRank.TWO_P;
-    assert rankHand("AAAAA") == HandRank.FIVE_OK;
-    assert rankHand("AA4AA") == HandRank.FOUR_OK;
-    assert rankHand("AAKKK") == HandRank.FULL_H;
-    assert rankHand("2AKKK") == HandRank.THREE_OK;
-    assert rankHand("AA43K") == HandRank.ONE_P;
-    assert rankHand("AT43K") == HandRank.HIGH_C;
+    assert rankHand("AA4KK") == HandRank.TWO_P : "AA4KK";
+    assert rankHand("AAAAA") == HandRank.FIVE_OK : "AAAAA";
+    assert rankHand("AA4AA") == HandRank.FOUR_OK : "AA4AA";
+    assert rankHand("AAKKK") == HandRank.FULL_H : "AAKKK";
+    assert rankHand("2AKKK") == HandRank.THREE_OK : "2AKKK";
+    assert rankHand("AA43K") == HandRank.ONE_P : "AA43K";
+    assert rankHand("AT43K") == HandRank.HIGH_C : "AT43K";
 
     var one = partOne(input);
     log("Part One Test: " + one);
@@ -74,13 +76,14 @@ public class Day7 {
     log("Part One Real: " + one);
     assert one == 248179786;
 
-    assert rankHand2("AAJKK") == HandRank.FULL_H;
-    assert rankHand2("AAAJJ") == HandRank.FIVE_OK;
-    assert rankHand2("AA4JA") == HandRank.FOUR_OK;
-    assert rankHand2("AAKKK") == HandRank.FULL_H;
-    assert rankHand2("2AJKK") == HandRank.THREE_OK;
-    assert rankHand2("AA43K") == HandRank.ONE_P;
-    assert rankHand2("AT43J") == HandRank.ONE_P;
+    partTwo = true;
+    assert rankHand("AAJKK") == HandRank.FULL_H : "AAJKK";
+    assert rankHand("AAAJJ") == HandRank.FIVE_OK : "AAAJJ";
+    assert rankHand("AA4JA") == HandRank.FOUR_OK : "AA4JA";
+    assert rankHand("AAKKK") == HandRank.FULL_H : "AAKKK";
+    assert rankHand("2AJKK") == HandRank.THREE_OK : "2AJKK";
+    assert rankHand("AA43K") == HandRank.ONE_P : "AA43K";
+    assert rankHand("AT43J") == HandRank.ONE_P : "AT43J";
 
     var two = partTwo(input);
     log("Part Two Test: " + two);
@@ -88,8 +91,10 @@ public class Day7 {
 
     two = partTwo(readFile());
     log("Part Two Real: " + two);
-    assert two == 999;
+    assert two == 247885995;
   }
+
+  private static boolean partTwo = false;
 
   private record Hand(String str, long bet, HandRank rank) implements Comparable<Hand> {
     public int compareTo(Hand o) {
@@ -99,16 +104,24 @@ public class Day7 {
         char[] right = o.str.toCharArray();
 
         for (int i = 0; i < left.length; i++) {
-          if (left[i] != right[i]) {
-            return order.get(left[i]).compareTo(order.get(right[i]));
+          char l = left[i];
+          char r = right[i];
+          if (partTwo) {
+            l = (l == 'J' ? l = 'S' : l);
+            r = (r == 'J' ? r = 'S' : r);
+          }
+          if (l != r) {
+            return order.get(l).compareTo(order.get(r));
           }
         }
       }
       return rankSort;
     }
+
   }
 
   private static long partOne(String[] input) {
+    partTwo = false;
     List<Hand> sorted = Arrays.stream(input)
         .map(line -> {
           String[] parts = line.trim().split(" +");
@@ -126,24 +139,52 @@ public class Day7 {
   }
 
   private static long partTwo(String[] input) {
-    return 0;
+    partTwo = true;
+    List<Hand> sorted = Arrays.stream(input)
+        .map(line -> {
+          String[] parts = line.trim().split(" +");
+          String str = parts[0].trim();
+          long bet = toNum(parts[1].trim());
+          return new Hand(str, bet, rankHand(str));
+        })
+        .sorted((h1, h2) -> h1.compareTo(h2))
+        .collect(Collectors.toList());
+
+    return IntStream
+        .range(0, sorted.size())
+        .mapToObj(i -> (i + 1) * sorted.get(i).bet)
+        .reduce(Long::sum).get();
   }
 
   private static HandRank rankHand(String hand) {
-    Collection<Integer> uniques = hand.chars()
+    Map<Integer, Integer> map = hand.chars()
         .mapToObj(i -> i)
         .reduce(
             new HashMap<Integer, Integer>(),
-            (map, i) -> {
-              map.merge(i, 1, Integer::sum);
-              return map;
+            (m, i) -> {
+              m.merge(i, 1, Integer::sum);
+              return m;
             },
             (m, m2) -> {
               m.putAll(m2);
               return m;
-            })
-        .values();
+            });
 
+    if (partTwo) {
+      int numJ = map.getOrDefault((int) 'J', 0);
+      map.remove((int) 'J');
+      if (numJ == 5) {
+        return HandRank.FIVE_OK;
+      }
+
+      Entry<Integer, Integer> best = map.entrySet().stream()
+          .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+          .findFirst()
+          .get();
+      best.setValue(best.getValue() + numJ);
+    }
+
+    var uniques = map.values();
     HandRank rank = null;
     switch (uniques.size()) {
       case 1:
