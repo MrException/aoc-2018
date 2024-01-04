@@ -47,7 +47,7 @@ public class Day12 {
 
     one = run(readFile());
     log("Part One Real: " + one);
-    assert one == 0;
+    assert one == 8270;
 
     var two = run(input);
     log("Part Two Test: " + two);
@@ -62,32 +62,76 @@ public class Day12 {
     long result = 0;
 
     for (String line : input) {
+      // String line = input[0];
       int possibilities = 0;
 
       String pattern = line.split(" ")[0];
       String broken = line.split(" ")[1];
 
-      String[] permutations = permute(pattern);
+      Set<String> permutations = permute(pattern, 0);
 
       for (String perm : permutations) {
-        if (accept(perm, broken)) {
+        var good = accept(perm, broken);
+        // log(String.format("%s is %s", perm, good));
+        if (good) {
           possibilities++;
         }
       }
 
-      log(String.format("%s - %s arrangements", line, possibilities));
+      // log(String.format("%s - %s arrangements", line, possibilities));
 
       result += possibilities;
     }
 
     return result;
+
   }
 
-  private static String[] permute(String pattern) {
-    return new String[] { pattern };
+  private static Set<String> permute(String pattern, int pos) {
+    if (pos >= pattern.length()) {
+      return Set.of(pattern);
+    }
+
+    if (pattern.charAt(pos) != '?') {
+      return permute(pattern, pos + 1);
+    }
+
+    Set<String> result = new HashSet<>();
+
+    result.addAll(permute(pattern.substring(0, pos) + '.' + pattern.substring(pos + 1), pos + 1));
+    result.addAll(permute(pattern.substring(0, pos) + '#' + pattern.substring(pos + 1), pos + 1));
+
+    return result;
   }
 
   private static boolean accept(String perm, String broken) {
-    return true;
+    char[] chars = perm.toCharArray();
+    List<Long> b = toNums(broken.split(","));
+
+    int l = 0;
+    for (int i = 0; i < chars.length; i++) {
+      if (chars[i] == '#') {
+        l++;
+      }
+
+      if (chars[i] == '.' && l > 0) {
+        if (b.isEmpty()) {
+          return false;
+        }
+        if (b.remove(0) != l) {
+          return false;
+        }
+        l = 0;
+      }
+    }
+    if (l > 0) {
+      if (b.isEmpty()) {
+        return false;
+      }
+      if (b.remove(0) != l) {
+        return false;
+      }
+    }
+    return b.isEmpty();
   }
 }
