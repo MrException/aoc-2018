@@ -53,17 +53,17 @@ public class Day11 {
     log("Part One Real: " + one);
     assert one == 9522407;
 
-    var two = run(input, 10);
+    var two = run(input, 9);
     log("Part Two Test A: " + two);
     assert two == 1030;
 
-    two = run(input, 100);
+    two = run(input, 99);
     log("Part Two Test B: " + two);
-    assert two == 8470;
+    assert two == 8410;
 
-    two = run(readFile(), 1000000);
+    two = run(readFile(), 999999);
     log("Part Two Real: " + two);
-    assert two == 0;
+    assert two == 544723432977l;
   }
 
   private static class Galaxy {
