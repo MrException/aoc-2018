@@ -14,13 +14,11 @@ public class Day12 {
     System.out.println(o);
   }
 
-  public static Queue<Long> toNums(String[] strs) {
-    Queue<Long> q = new LinkedList<>();
-    Arrays.stream(strs)
+  public static Long[] toNums(String[] strs) {
+    return Arrays.stream(strs)
         .filter(s -> !s.isBlank())
         .map(Day12::toNum)
-        .forEach(q::add);
-    return q;
+        .toArray(Long[]::new);
   }
 
   public static long toNum(String str) {
@@ -51,11 +49,11 @@ public class Day12 {
     log("Part One Real: " + one);
     assert one == 8270;
 
-    var two = run(input);
+    var two = run(expand(input));
     log("Part Two Test: " + two);
     assert two == 525152;
 
-    two = run(readFile());
+    two = run(expand(readFile()));
     log("Part Two Real: " + two);
     assert two == 0;
   }
@@ -64,27 +62,32 @@ public class Day12 {
     long result = 0;
 
     for (String line : input) {
-      // String line = input[0];
-      int possibilities = 0;
-
       String pattern = line.split(" ")[0];
-      String broken = line.split(" ")[1];
+      Long[] broken = toNums(line.split(" ")[1].split(","));
 
-      Set<String> permutations = permute(pattern, broken);
-
-      possibilities += permutations.size();
-
-      // log(String.format("%s - %s arrangements", line, possibilities));
-
-      result += possibilities;
+      result += permute(pattern, broken);
     }
 
     return result;
-
   }
 
-  private static Set<String> permute(String original, String broken) {
-    Set<String> result = new HashSet<>();
+  private static String[] expand(String[] input) {
+    String[] result = new String[input.length];
+
+    for (int i = 0; i < input.length; i++) {
+      String line = input[i];
+      String pattern = line.split(" ")[0];
+      String broken = line.split(" ")[1];
+      String expandedPattern = String.format("%s?%s?%s?%s?%s", pattern, pattern, pattern, pattern, pattern);
+      String expandedBroken = String.format("%s,%s,%s,%s,%s", broken, broken, broken, broken, broken);
+      result[i] = String.format("%s %s", expandedPattern, expandedBroken);
+    }
+
+    return result;
+  }
+
+  private static long permute(String original, Long[] broken) {
+    long result = 0;
     Queue<String> q = new LinkedList<>();
     q.add(original);
 
@@ -101,19 +104,19 @@ public class Day12 {
           q.add(newPattern);
         }
       } else {
-        result.add(pattern);
+        result++;
       }
     }
     return result;
 
   }
 
-  private static boolean accept(String perm, String broken) {
+  private static boolean accept(String perm, Long[] broken) {
     char[] chars = perm.toCharArray();
-    Queue<Long> q = toNums(broken.split(","));
 
     boolean complete = !perm.contains("?");
 
+    int q = 0;
     int l = 0;
     for (int i = 0; i < chars.length; i++) {
       if (chars[i] == '?') {
@@ -125,8 +128,11 @@ public class Day12 {
       }
 
       if (chars[i] == '.' && l > 0) {
-        var n = q.poll();
-        if (n == null || n != l) {
+        if (q >= broken.length) {
+          return false;
+        }
+        var n = broken[q++];
+        if (n != l) {
           return false;
         }
         l = 0;
@@ -134,10 +140,10 @@ public class Day12 {
     }
 
     if (l > 0) {
-      var n = q.poll();
-      if (n == null) {
+      if (q >= broken.length) {
         return false;
       }
+      var n = broken[q++];
       if (!complete && n < l) {
         return false;
       }
@@ -147,7 +153,7 @@ public class Day12 {
     }
 
     if (complete) {
-      return q.isEmpty();
+      return q >= broken.length;
     }
 
     return true;
