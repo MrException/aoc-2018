@@ -14,11 +14,13 @@ public class Day12 {
     System.out.println(o);
   }
 
-  public static List<Long> toNums(String[] strs) {
-    return Arrays.stream(strs)
+  public static Queue<Long> toNums(String[] strs) {
+    Queue<Long> q = new LinkedList<>();
+    Arrays.stream(strs)
         .filter(s -> !s.isBlank())
         .map(Day12::toNum)
-        .collect(Collectors.toList());
+        .forEach(q::add);
+    return q;
   }
 
   public static long toNum(String str) {
@@ -105,7 +107,7 @@ public class Day12 {
 
   private static boolean accept(String perm, String broken) {
     char[] chars = perm.toCharArray();
-    List<Long> b = toNums(broken.split(","));
+    Queue<Long> q = toNums(broken.split(","));
 
     int l = 0;
     for (int i = 0; i < chars.length; i++) {
@@ -114,23 +116,19 @@ public class Day12 {
       }
 
       if (chars[i] == '.' && l > 0) {
-        if (b.isEmpty()) {
-          return false;
-        }
-        if (b.remove(0) != l) {
+        var n = q.poll();
+        if (n == null || n != l) {
           return false;
         }
         l = 0;
       }
     }
     if (l > 0) {
-      if (b.isEmpty()) {
-        return false;
-      }
-      if (b.remove(0) != l) {
+      var n = q.poll();
+      if (n == null || n != l) {
         return false;
       }
     }
-    return b.isEmpty();
+    return q.isEmpty();
   }
 }
