@@ -70,15 +70,9 @@ public class Day12 {
       String pattern = line.split(" ")[0];
       String broken = line.split(" ")[1];
 
-      Set<String> permutations = permute(pattern);
+      Set<String> permutations = permute(pattern, broken);
 
-      for (String perm : permutations) {
-        var good = accept(perm, broken);
-        // log(String.format("%s is %s", perm, good));
-        if (good) {
-          possibilities++;
-        }
-      }
+      possibilities += permutations.size();
 
       // log(String.format("%s - %s arrangements", line, possibilities));
 
@@ -89,7 +83,7 @@ public class Day12 {
 
   }
 
-  private static Set<String> permute(String original) {
+  private static Set<String> permute(String original, String broken) {
     Set<String> result = new HashSet<>();
     Queue<String> q = new LinkedList<>();
     q.add(original);
@@ -98,21 +92,34 @@ public class Day12 {
       var pattern = q.poll();
       var pos = pattern.indexOf('?');
       if (pos > -1) {
-        q.add(pattern.substring(0, pos) + '.' + pattern.substring(pos + 1));
-        q.add(pattern.substring(0, pos) + '#' + pattern.substring(pos + 1));
+        String newPattern = pattern.substring(0, pos) + '.' + pattern.substring(pos + 1);
+        if (accept(newPattern, broken)) {
+          q.add(newPattern);
+        }
+        newPattern = pattern.substring(0, pos) + '#' + pattern.substring(pos + 1);
+        if (accept(newPattern, broken)) {
+          q.add(newPattern);
+        }
       } else {
         result.add(pattern);
       }
     }
     return result;
+
   }
 
   private static boolean accept(String perm, String broken) {
     char[] chars = perm.toCharArray();
     Queue<Long> q = toNums(broken.split(","));
 
+    boolean complete = !perm.contains("?");
+
     int l = 0;
     for (int i = 0; i < chars.length; i++) {
+      if (chars[i] == '?') {
+        break;
+      }
+
       if (chars[i] == '#') {
         l++;
       }
@@ -125,12 +132,24 @@ public class Day12 {
         l = 0;
       }
     }
+
     if (l > 0) {
       var n = q.poll();
-      if (n == null || n != l) {
+      if (n == null) {
+        return false;
+      }
+      if (!complete && n < l) {
+        return false;
+      }
+      if (complete && n != l) {
         return false;
       }
     }
-    return q.isEmpty();
+
+    if (complete) {
+      return q.isEmpty();
+    }
+
+    return true;
   }
 }
