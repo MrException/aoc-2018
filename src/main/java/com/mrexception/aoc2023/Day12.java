@@ -53,7 +53,7 @@ public class Day12 {
 
     var two = run(input);
     log("Part Two Test: " + two);
-    assert two == 0;
+    assert two == 525152;
 
     two = run(readFile());
     log("Part Two Real: " + two);
@@ -70,8 +70,7 @@ public class Day12 {
       String pattern = line.split(" ")[0];
       String broken = line.split(" ")[1];
 
-      Set<String> permutations = new HashSet<>();
-      permute(permutations, pattern, 0);
+      Set<String> permutations = permute(pattern);
 
       for (String perm : permutations) {
         var good = accept(perm, broken);
@@ -90,19 +89,22 @@ public class Day12 {
 
   }
 
-  private static void permute(Set<String> permutations, String pattern, int pos) {
-    if (pos >= pattern.length()) {
-      permutations.add(pattern);
-      return;
-    }
+  private static Set<String> permute(String original) {
+    Set<String> result = new HashSet<>();
+    Queue<String> q = new LinkedList<>();
+    q.add(original);
 
-    if (pattern.charAt(pos) != '?') {
-      permute(permutations, pattern, pos + 1);
-      return;
+    while (!q.isEmpty()) {
+      var pattern = q.poll();
+      var pos = pattern.indexOf('?');
+      if (pos > -1) {
+        q.add(pattern.substring(0, pos) + '.' + pattern.substring(pos + 1));
+        q.add(pattern.substring(0, pos) + '#' + pattern.substring(pos + 1));
+      } else {
+        result.add(pattern);
+      }
     }
-
-    permute(permutations, pattern.substring(0, pos) + '.' + pattern.substring(pos + 1), pos + 1);
-    permute(permutations, pattern.substring(0, pos) + '#' + pattern.substring(pos + 1), pos + 1);
+    return result;
   }
 
   private static boolean accept(String perm, String broken) {
