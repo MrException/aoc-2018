@@ -68,7 +68,8 @@ public class Day12 {
       String pattern = line.split(" ")[0];
       String broken = line.split(" ")[1];
 
-      Set<String> permutations = permute(pattern, 0);
+      Set<String> permutations = new HashSet<>();
+      permute(permutations, pattern, 0);
 
       for (String perm : permutations) {
         var good = accept(perm, broken);
@@ -87,21 +88,19 @@ public class Day12 {
 
   }
 
-  private static Set<String> permute(String pattern, int pos) {
+  private static void permute(Set<String> permutations, String pattern, int pos) {
     if (pos >= pattern.length()) {
-      return Set.of(pattern);
+      permutations.add(pattern);
+      return;
     }
 
     if (pattern.charAt(pos) != '?') {
-      return permute(pattern, pos + 1);
+      permute(permutations, pattern, pos + 1);
+      return;
     }
 
-    Set<String> result = new HashSet<>();
-
-    result.addAll(permute(pattern.substring(0, pos) + '.' + pattern.substring(pos + 1), pos + 1));
-    result.addAll(permute(pattern.substring(0, pos) + '#' + pattern.substring(pos + 1), pos + 1));
-
-    return result;
+    permute(permutations, pattern.substring(0, pos) + '.' + pattern.substring(pos + 1), pos + 1);
+    permute(permutations, pattern.substring(0, pos) + '#' + pattern.substring(pos + 1), pos + 1);
   }
 
   private static boolean accept(String perm, String broken) {
