@@ -53,20 +53,28 @@ public class Day12 {
     log("Part Two Test: " + two);
     assert two == 525152;
 
-    // two = run(expand(readFile()));
-    // log("Part Two Real: " + two);
-    // assert two == 0;
+    two = run(expand(readFile()));
+    log("Part Two Real: " + two);
+    assert two == 0;
   }
 
   private static long run(String[] input) {
     long result = 0;
 
-    for (String line : input) {
+    Map<String, Long> cache = new HashMap<>();
+    for (int i = 0; i < input.length; i++) {
+      String line = input[i];
+
       String pattern = line.split(" ")[0];
       Long[] broken = toNums(line.split(" ")[1].split(","));
 
+      if (i % 100 == 0) {
+        log("Completed " + i);
+      }
+
       // result += permute(pattern, broken);
-      result += recurse(0, broken, 0, 0, pattern);
+
+      result += recurse(0, broken, 0, 0, pattern, cache);
     }
 
     return result;
@@ -112,10 +120,37 @@ public class Day12 {
 
   }
 
-  private static long recurse(int groupIdx, Long[] group, int pos, int curLen, String pattern) {
+  private static long recurse(int groupIdx, Long[] group, int pos, int curLen, String pattern, Map<String, Long> memo) {
+    String key = String.format("%s-%s-%s-%s-%s", groupIdx, Arrays.toString(group), pos, curLen, pattern);
+    if (memo.containsKey(key)) {
+      return memo.get(key);
+    }
+
     if (pos >= pattern.length()) {
-      // off the end of the pattern
-      log(String.format("%s is valid %s", pattern, Arrays.toString(group)));
+
+      // if we hit the end of the string, and we haven't finished all groups
+      if (groupIdx < group.length - 1) {
+        // log(String.format("%s is invalid D %s", pattern, Arrays.toString(group)));
+        memo.put(key, 0L);
+        return 0;
+      }
+
+      if (groupIdx == group.length - 1 && group[groupIdx] != curLen) {
+        // log(String.format("%s is invalid E %s", pattern, Arrays.toString(group)));
+        memo.put(key, 0L);
+        return 0;
+      }
+
+      // if the last char is a '#' and current length doesn't equal the final group
+      if (curLen > 0 && curLen != group[group.length - 1]) {
+        // log(String.format("%s is invalid F %s", pattern, Arrays.toString(group)));
+        memo.put(key, 0L);
+        return 0;
+      }
+
+      // // off the end of the pattern
+      // log(String.format("%s is valid %s", pattern, Arrays.toString(group)));
+      memo.put(key, 1L);
       return 1;
       // if (groupIdx == group.length - 1 && group[groupIdx] == curLen) {
       // // found a valid pattern
@@ -132,30 +167,37 @@ public class Day12 {
 
       if (groupIdx >= group.length || curLen > group[groupIdx]) {
         // found an invalid pattern
-        log(pattern + " is invalid A " + Arrays.toString(group));
+        // log(pattern + " is invalid A " + Arrays.toString(group));
+        memo.put(key, 0L);
         return 0;
       }
     }
 
-    // PROBLEM! - we aren't catching the error of if we hit a '.' and the previous
-    // group was to short
+    if (pattern.charAt(pos) == '.' && curLen > 0) {
+      if (groupIdx >= group.length || curLen < group[groupIdx]) {
+        // found an invalid pattern
+        // log(pattern + " is invalid at " + pos + " C " + Arrays.toString(group));
+        memo.put(key, 0L);
+        return 0;
+      }
 
-    if (pattern.charAt(pos) == '.') {
       groupIdx++;
       curLen = 0;
     }
 
+    long result = 0;
     if (pattern.charAt(pos) == '?') {
       // recurse twice for two new patterns
-      long result = 0;
       String newPattern = pattern.substring(0, pos) + '.' + pattern.substring(pos + 1);
-      result += recurse(groupIdx, group, pos + 1, curLen, newPattern);
+      result += recurse(groupIdx, group, pos, curLen, newPattern, memo);
       newPattern = pattern.substring(0, pos) + '#' + pattern.substring(pos + 1);
-      result += recurse(groupIdx, group, pos + 1, curLen, newPattern);
-      return result;
+      result += recurse(groupIdx, group, pos, curLen, newPattern, memo);
     } else {
-      return recurse(groupIdx, group, pos + 1, curLen, pattern);
+      result = recurse(groupIdx, group, pos + 1, curLen, pattern, memo);
     }
+
+    memo.put(key, result);
+    return result;
   }
 
   private static boolean accept(String perm, Long[] broken) {
