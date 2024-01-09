@@ -53,9 +53,9 @@ public class Day12 {
     log("Part Two Test: " + two);
     assert two == 525152;
 
-    two = run(expand(readFile()));
-    log("Part Two Real: " + two);
-    assert two == 0;
+    // two = run(expand(readFile()));
+    // log("Part Two Real: " + two);
+    // assert two == 0;
   }
 
   private static long run(String[] input) {
@@ -65,7 +65,8 @@ public class Day12 {
       String pattern = line.split(" ")[0];
       Long[] broken = toNums(line.split(" ")[1].split(","));
 
-      result += permute(pattern, broken);
+      // result += permute(pattern, broken);
+      result += recurse(0, broken, 0, 0, pattern);
     }
 
     return result;
@@ -109,6 +110,52 @@ public class Day12 {
     }
     return result;
 
+  }
+
+  private static long recurse(int groupIdx, Long[] group, int pos, int curLen, String pattern) {
+    if (pos >= pattern.length()) {
+      // off the end of the pattern
+      log(String.format("%s is valid %s", pattern, Arrays.toString(group)));
+      return 1;
+      // if (groupIdx == group.length - 1 && group[groupIdx] == curLen) {
+      // // found a valid pattern
+      // log(pattern + " is valid");
+      // return 1;
+      // } else {
+      // log(pattern + " is invalid B");
+      // return 0;
+      // }
+    }
+
+    if (pattern.charAt(pos) == '#') {
+      curLen++;
+
+      if (groupIdx >= group.length || curLen > group[groupIdx]) {
+        // found an invalid pattern
+        log(pattern + " is invalid A " + Arrays.toString(group));
+        return 0;
+      }
+    }
+
+    // PROBLEM! - we aren't catching the error of if we hit a '.' and the previous
+    // group was to short
+
+    if (pattern.charAt(pos) == '.') {
+      groupIdx++;
+      curLen = 0;
+    }
+
+    if (pattern.charAt(pos) == '?') {
+      // recurse twice for two new patterns
+      long result = 0;
+      String newPattern = pattern.substring(0, pos) + '.' + pattern.substring(pos + 1);
+      result += recurse(groupIdx, group, pos + 1, curLen, newPattern);
+      newPattern = pattern.substring(0, pos) + '#' + pattern.substring(pos + 1);
+      result += recurse(groupIdx, group, pos + 1, curLen, newPattern);
+      return result;
+    } else {
+      return recurse(groupIdx, group, pos + 1, curLen, pattern);
+    }
   }
 
   private static boolean accept(String perm, Long[] broken) {
