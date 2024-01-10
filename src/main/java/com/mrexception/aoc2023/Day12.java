@@ -74,7 +74,7 @@ public class Day12 {
 
       // result += permute(pattern, broken);
 
-      result += recurse(0, broken, 0, 0, pattern, cache);
+      result += recurse(0, broken, 0, pattern, cache);
     }
 
     return result;
@@ -120,47 +120,43 @@ public class Day12 {
 
   }
 
-  private static long recurse(int groupIdx, Integer[] group, int pos, int curLen, String pattern,
+  private static long recurse(int groupIdx, Integer[] group, int pos, String pattern,
       Map<String, Long> memo) {
-    String key = String.format("%s-%s-%s-%s-%s", groupIdx, Arrays.toString(group), pos, curLen, pattern);
-    if (memo.containsKey(key)) {
-      return memo.get(key);
-    }
+    String key = String.format("%s-%s-%s-%s", groupIdx, Arrays.toString(group), pos, pattern);
+    // if (memo.containsKey(key)) {
+    // return memo.get(key);
+    // }
 
     if (pos >= pattern.length()) {
 
       // if we hit the end of the string, and we haven't finished all groups
-      if (groupIdx < group.length - 1) {
-        // log(String.format("%s is invalid D %s", pattern, Arrays.toString(group)));
-        memo.put(key, 0L);
-        return 0;
-      }
-
-      if (groupIdx == group.length - 1 && group[groupIdx] != curLen) {
-        // log(String.format("%s is invalid E %s", pattern, Arrays.toString(group)));
-        memo.put(key, 0L);
-        return 0;
-      }
-
-      // if the last char is a '#' and current length doesn't equal the final group
-      if (curLen > 0 && curLen != group[group.length - 1]) {
-        // log(String.format("%s is invalid F %s", pattern, Arrays.toString(group)));
+      if (groupIdx < group.length) {
+        // log(String.format("A - %s is invalid at %s - %s", pattern, pos,
+        // Arrays.toString(group)));
         memo.put(key, 0L);
         return 0;
       }
 
       // // off the end of the pattern
-      // log(String.format("%s is valid %s", pattern, Arrays.toString(group)));
+      log(String.format("A - %s is valid %s - %s", pattern, Arrays.toString(group), groupIdx));
       memo.put(key, 1L);
       return 1;
-      // if (groupIdx == group.length - 1 && group[groupIdx] == curLen) {
-      // // found a valid pattern
-      // log(pattern + " is valid");
-      // return 1;
-      // } else {
-      // log(pattern + " is invalid B");
-      // return 0;
-      // }
+    }
+
+    if (groupIdx >= group.length) {
+      // all groups done - make sure there are no more '#'
+      for (int i = pos; i < pattern.length(); i++) {
+        if (pattern.charAt(i) == '#') {
+          // log(String.format("B - %s is invalid at %s - %s", pattern, pos,
+          // Arrays.toString(group)));
+          memo.put(key, 0L);
+          return 0;
+        }
+      }
+
+      log(String.format("B - %s is valid %s - %s", pattern, Arrays.toString(group), groupIdx));
+      memo.put(key, 1L);
+      return 1;
     }
 
     if (pattern.charAt(pos) == '#') {
@@ -168,6 +164,8 @@ public class Day12 {
 
       // there must be at least enough chars to fill the group
       if (pos + len >= pattern.length()) {
+        // log(String.format("C - %s is invalid at %s - %s", pattern, pos,
+        // Arrays.toString(group)));
         memo.put(key, 0L);
         return 0;
       }
@@ -176,6 +174,8 @@ public class Day12 {
       // it can contain a '?' since we can substitute that for a '#'
       for (int i = pos; i < pos + len; i++) {
         if (pattern.charAt(i) == '.') {
+          // log(String.format("D - %s is invalid at %s - %s", pattern, pos,
+          // Arrays.toString(group)));
           memo.put(key, 0L);
           return 0;
         }
@@ -183,18 +183,20 @@ public class Day12 {
 
       // the immediate next char must not be a '#'
       if (pattern.charAt(pos + len) == '#') {
+        log(String.format("E - %s is invalid at %s - %s - %s", pattern, pos, Arrays.toString(group), groupIdx));
         memo.put(key, 0L);
         return 0;
       }
 
       pos = pos + len;
-      long result = recurse(groupIdx, group, pos, curLen, pattern, memo);
+      groupIdx++;
+      long result = recurse(groupIdx, group, pos, pattern, memo);
       memo.put(key, result);
       return result;
     }
 
     if (pattern.charAt(pos) == '.') {
-      long result = recurse(groupIdx, group, pos + 1, curLen, pattern, memo);
+      long result = recurse(groupIdx, group, pos + 1, pattern, memo);
       memo.put(key, result);
       return result;
     }
@@ -203,11 +205,14 @@ public class Day12 {
     if (pattern.charAt(pos) == '?') {
       // recurse twice for two new patterns
       String newPattern = pattern.substring(0, pos) + '.' + pattern.substring(pos + 1);
-      result += recurse(groupIdx, group, pos, curLen, newPattern, memo);
+      // log(pattern + " -> " + newPattern);
+      result += recurse(groupIdx, group, pos, newPattern, memo);
+      // TODO: problem - if the PREVIOUS char was a '#', this one can't be! or we
+      // violate the previous group
       newPattern = pattern.substring(0, pos) + '#' + pattern.substring(pos + 1);
-      result += recurse(groupIdx, group, pos, curLen, newPattern, memo);
+      result += recurse(groupIdx, group, pos, newPattern, memo);
     } else {
-      result = recurse(groupIdx, group, pos + 1, curLen, pattern, memo);
+      result = recurse(groupIdx, group, pos + 1, pattern, memo);
     }
 
     memo.put(key, result);
