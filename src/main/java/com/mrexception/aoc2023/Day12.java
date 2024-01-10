@@ -14,15 +14,15 @@ public class Day12 {
     System.out.println(o);
   }
 
-  public static Long[] toNums(String[] strs) {
+  public static Integer[] toNums(String[] strs) {
     return Arrays.stream(strs)
         .filter(s -> !s.isBlank())
         .map(Day12::toNum)
-        .toArray(Long[]::new);
+        .toArray(Integer[]::new);
   }
 
-  public static long toNum(String str) {
-    return Long.parseLong(str.trim());
+  public static int toNum(String str) {
+    return Integer.parseInt(str.trim());
   }
 
   private static String[] input = new String[] {
@@ -53,9 +53,9 @@ public class Day12 {
     log("Part Two Test: " + two);
     assert two == 525152;
 
-    two = run(expand(readFile()));
-    log("Part Two Real: " + two);
-    assert two == 0;
+    // two = run(expand(readFile()));
+    // log("Part Two Real: " + two);
+    // assert two == 0;
   }
 
   private static long run(String[] input) {
@@ -66,7 +66,7 @@ public class Day12 {
       String line = input[i];
 
       String pattern = line.split(" ")[0];
-      Long[] broken = toNums(line.split(" ")[1].split(","));
+      Integer[] broken = toNums(line.split(" ")[1].split(","));
 
       if (i % 100 == 0) {
         log("Completed " + i);
@@ -120,7 +120,8 @@ public class Day12 {
 
   }
 
-  private static long recurse(int groupIdx, Long[] group, int pos, int curLen, String pattern, Map<String, Long> memo) {
+  private static long recurse(int groupIdx, Integer[] group, int pos, int curLen, String pattern,
+      Map<String, Long> memo) {
     String key = String.format("%s-%s-%s-%s-%s", groupIdx, Arrays.toString(group), pos, curLen, pattern);
     if (memo.containsKey(key)) {
       return memo.get(key);
@@ -163,26 +164,39 @@ public class Day12 {
     }
 
     if (pattern.charAt(pos) == '#') {
-      curLen++;
+      var len = group[groupIdx];
 
-      if (groupIdx >= group.length || curLen > group[groupIdx]) {
-        // found an invalid pattern
-        // log(pattern + " is invalid A " + Arrays.toString(group));
+      // there must be at least enough chars to fill the group
+      if (pos + len >= pattern.length()) {
         memo.put(key, 0L);
         return 0;
       }
+
+      // the next group of chars must not contain a '.'
+      // it can contain a '?' since we can substitute that for a '#'
+      for (int i = pos; i < pos + len; i++) {
+        if (pattern.charAt(i) == '.') {
+          memo.put(key, 0L);
+          return 0;
+        }
+      }
+
+      // the immediate next char must not be a '#'
+      if (pattern.charAt(pos + len) == '#') {
+        memo.put(key, 0L);
+        return 0;
+      }
+
+      pos = pos + len;
+      long result = recurse(groupIdx, group, pos, curLen, pattern, memo);
+      memo.put(key, result);
+      return result;
     }
 
-    if (pattern.charAt(pos) == '.' && curLen > 0) {
-      if (groupIdx >= group.length || curLen < group[groupIdx]) {
-        // found an invalid pattern
-        // log(pattern + " is invalid at " + pos + " C " + Arrays.toString(group));
-        memo.put(key, 0L);
-        return 0;
-      }
-
-      groupIdx++;
-      curLen = 0;
+    if (pattern.charAt(pos) == '.') {
+      long result = recurse(groupIdx, group, pos + 1, curLen, pattern, memo);
+      memo.put(key, result);
+      return result;
     }
 
     long result = 0;
