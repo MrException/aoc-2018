@@ -63,31 +63,64 @@ public class Day13 {
   }
 
   private static long run(String[] input) {
+    int result = 0;
+
     // loop until an empty line is found
-    String[] mirrors;
     int start = 0;
     int end;
     for (int i = 0; i < input.length; i++) {
-      if (input[i].isBlank()) {
+      if (input[i].isBlank() || i == input.length - 1) {
         // found the last line
         end = i - 1;
 
-        mirrors = Arrays.copyOfRange(input, start, end + 1);
-        log(String.join("\n", mirrors));
-        log("-----");
-        log(String.join("\n", rotate(mirrors)));
+        var mirrors = Arrays.copyOfRange(input, start, end + 1);
+        // log(String.join("\n", mirrors));
+        // log("-----");
+        // log(String.join("\n", rotated));
 
         // do stuff
+        var focal = findFocal(mirrors);
+        if (focal == 0) {
+          focal = findFocal(rotate(mirrors));
+          result += focal;
+        } else {
+          result += 100 * focal;
+        }
 
         // reset
         start = i + 1;
         end = 0;
-        mirrors = null;
-        return 0;
+      }
+    }
+
+    return result;
+  }
+
+  private static int findFocal(String[] mirrors) {
+    int left = 0;
+    int right = mirrors.length - 1;
+    boolean found = false;
+    while (!found && left < right) {
+      if (!mirrors[left].equals(mirrors[right])) {
+        if (right == mirrors.length - 1) {
+          left++;
+        }
+        right = mirrors.length - 1;
+        found = false;
+      } else if (mirrors[left].equals(mirrors[right])) {
+        if (left == right - 1) {
+          // found the focal point between left/right
+          found = true;
+          return left + 1;
+        } else {
+          left++;
+          right--;
+        }
       }
     }
 
     return 0;
+
   }
 
   private static String[] rotate(String[] in) {
