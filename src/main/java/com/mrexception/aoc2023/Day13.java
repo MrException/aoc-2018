@@ -1,7 +1,6 @@
 package com.mrexception.aoc2023;
 
 import java.util.*;
-import java.util.stream.IntStream;
 import java.nio.file.*;
 
 public class Day13 {
@@ -98,9 +97,9 @@ public class Day13 {
     String[] out = new String[n];
 
     int i = 0;
-    for (int x = n - 1; x >= 0; x--) {
+    for (int x = 0; x < n; x++) {
       StringBuilder sb = new StringBuilder();
-      for (int y = 0; y < m; y++) {
+      for (int y = m - 1; y >= 0; y--) {
         sb.append(in[y].charAt(x));
       }
       out[i] = sb.toString();
